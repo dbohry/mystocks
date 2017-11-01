@@ -9,7 +9,7 @@ import (
 
 //Routes create app URL routes
 //
-func Routes() {
+func init() {
 	router := mux.NewRouter()
 	
 		stocks = append(stocks, Stock{ID: "WEGE3", Name: "WEG"})

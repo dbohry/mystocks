@@ -1,7 +1,6 @@
 # myStocks
 
-A simple web app using Go and MongoDB
-
+A simple web app using Go and MongoDB to store stocks history.
 
 # Intalation
 

@@ -3,13 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 	"github.com/gorilla/mux"
 
 	"github.com/dbohry/mystocks/models"
-	"github.com/dbohry/mystocks/configs"
-	"github.com/dbohry/mystocks/tools"
+	"github.com/dbohry/mystocks/services"
 )
 
 const collection = "stocks"
@@ -17,16 +14,7 @@ const collection = "stocks"
 // GetStocks return all stocks
 //
 func GetStocks(w http.ResponseWriter, req *http.Request) {
-	session, err := mgo.Dial(configs.HOST)
-	tools.ValidatePanic(err)
-	defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
-	c := session.DB(configs.DB).C(collection)
-
-	result := make([]models.Stock, 0, 10)
-	err = c.Find(bson.M{}).All(&result)
-	tools.ValidateFatal(err)
-
+	result := services.GetStocks()
 	json.NewEncoder(w).Encode(result)
 }
 
@@ -34,38 +22,17 @@ func GetStocks(w http.ResponseWriter, req *http.Request) {
 //
 func GetStock(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
-	
-	session, err := mgo.Dial(configs.HOST)
-	tools.ValidatePanic(err)
-	defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
-	c := session.DB(configs.DB).C(collection)
-
-	result := models.Stock{}
-	err = c.Find(bson.M{"id": params["id"]}).One(&result)
-	tools.ValidateFatal(err)
-
+	result := services.GetStockByID(params["id"])
 	json.NewEncoder(w).Encode(result)
 }
 
 // SaveStock save a new stock
 //
-func SaveStock(w http.ResponseWriter, req *http.Request) {	
-	session, err := mgo.Dial(configs.HOST)
-	tools.ValidatePanic(err)
-	defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
-	c := session.DB(configs.DB).C(collection)
-
+func SaveStock(w http.ResponseWriter, req *http.Request) {
 	var stock models.Stock
 	_ = json.NewDecoder(req.Body).Decode(&stock)
-	err = c.Insert(&stock)
-	tools.ValidateFatal(err)
-
-	result := models.Stock{}
-	err = c.Find(bson.M{"id": &stock.ID}).One(&result)
-	tools.ValidateFatal(err)
-
+	saved := services.CreateStock(stock)
+	result := services.GetStockByID(saved.ID)
 	json.NewEncoder(w).Encode(result)
 }
 

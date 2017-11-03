@@ -39,4 +39,7 @@ func SaveStock(w http.ResponseWriter, req *http.Request) {
 // DeleteStock delete a stock by ID
 //
 func DeleteStock(w http.ResponseWriter, req *http.Request) {
+	params := mux.Vars(req)
+	services.DeleteStock(params["id"])
+	json.NewEncoder(w).Encode(params["id"] + " was removed!")
 }

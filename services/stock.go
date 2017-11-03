@@ -57,3 +57,15 @@ func CreateStock(s models.Stock) models.Stock {
 
 	return s
 }
+
+//DeleteStock remove a stock by ID
+//
+func DeleteStock(id string) {
+	session, err := mgo.Dial(configs.HOST)
+	tools.ValidatePanic(err)
+	defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+	c := session.DB(configs.DB).C(collection)
+	err = c.Remove(bson.M{"id": id})
+	tools.ValidateFatal(err)
+}

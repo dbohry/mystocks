@@ -3,31 +3,29 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-	"log"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"github.com/gorilla/mux"
 
 	"github.com/dbohry/mystocks/models"
+	"github.com/dbohry/mystocks/configs"
+	"github.com/dbohry/mystocks/tools"
 )
+
+const collection = "stocks"
 
 // GetStocks return all stocks
 //
 func GetStocks(w http.ResponseWriter, req *http.Request) {
-	session, err := mgo.Dial("localhost")
-	if err != nil {
-		panic(err)
-	}
+	session, err := mgo.Dial(configs.HOST)
+	tools.ValidatePanic(err)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-	c := session.DB("mystocks").C("stocks")
-	
+	c := session.DB(configs.DB).C(collection)
 
 	result := make([]models.Stock, 0, 10)
 	err = c.Find(bson.M{}).All(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
+	tools.ValidateFatal(err)
 
 	json.NewEncoder(w).Encode(result)
 }
@@ -37,19 +35,15 @@ func GetStocks(w http.ResponseWriter, req *http.Request) {
 func GetStock(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	
-	session, err := mgo.Dial("localhost")
-	if err != nil {
-		panic(err)
-	}
+	session, err := mgo.Dial(configs.HOST)
+	tools.ValidatePanic(err)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-	c := session.DB("mystocks").C("stocks")
+	c := session.DB(configs.DB).C(collection)
 
 	result := models.Stock{}
 	err = c.Find(bson.M{"id": params["id"]}).One(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
+	tools.ValidateFatal(err)
 
 	json.NewEncoder(w).Encode(result)
 }
@@ -57,26 +51,20 @@ func GetStock(w http.ResponseWriter, req *http.Request) {
 // SaveStock save a new stock
 //
 func SaveStock(w http.ResponseWriter, req *http.Request) {	
-	session, err := mgo.Dial("localhost")
-	if err != nil {
-		panic(err)
-	}
+	session, err := mgo.Dial(configs.HOST)
+	tools.ValidatePanic(err)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-	c := session.DB("mystocks").C("stocks")
+	c := session.DB(configs.DB).C(collection)
 
 	var stock models.Stock
 	_ = json.NewDecoder(req.Body).Decode(&stock)
 	err = c.Insert(&stock)
-	if err != nil {
-		log.Fatal(err)
-	}
+	tools.ValidateFatal(err)
 
 	result := models.Stock{}
 	err = c.Find(bson.M{"id": &stock.ID}).One(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
+	tools.ValidateFatal(err)
 
 	json.NewEncoder(w).Encode(result)
 }

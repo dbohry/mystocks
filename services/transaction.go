@@ -21,6 +21,7 @@ func GetTransactions(idUser string) []models.Transaction {
 	c := session.DB(configs.DB).C(cTransactions)
 
 	result := make([]models.Transaction, 0, 10)
+	println("Searching Transactions by User: " + idUser)
 	err = c.Find(bson.M{}).All(&result)
 	tools.ValidateFatal(err)
 
@@ -37,6 +38,7 @@ func GetTransactionByID(idUser string, id string) models.Transaction {
 	c := session.DB(configs.DB).C(cTransactions)
 
 	result := models.Transaction{}
+	println("Searching specific Transaction by User: " + idUser)
 	err = c.Find(bson.M{"id": id}).One(&result)
 	tools.ValidateFatal(err)
 
@@ -45,12 +47,17 @@ func GetTransactionByID(idUser string, id string) models.Transaction {
 
 //SaveTransaction save a new transactions
 //
-func SaveTransaction(t models.Transaction) models.Transaction {
+func SaveTransaction(user string, t models.Transaction) models.Transaction {
 	session, err := mgo.Dial(configs.HOST)
 	tools.ValidatePanic(err)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(configs.DB).C(cTransactions)
+
+	t.User = getUser(user)
+	t.Stock = getStock(t.Stock.ID)
+
+	println("Saving new Transaction")
 	err = c.Insert(t)
 	tools.ValidateFatal(err)
 
@@ -65,6 +72,16 @@ func DeleteTransaction(idUser string, id string) bool {
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(configs.DB).C(cTransactions)
+
+	println("Removing Transaction by ID: " + id)
 	err = c.Remove(bson.M{"id": id})
 	return tools.ValidateExecution(err)
+}
+
+func getUser(name string) models.User {
+	return GetUserByName(name)
+}
+
+func getStock(id string) models.Stock {
+	return GetStockByID(id)
 }

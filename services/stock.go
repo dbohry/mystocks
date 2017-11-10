@@ -21,6 +21,7 @@ func GetStocks() []models.Stock {
 	c := session.DB(configs.DB).C(cStocks)
 
 	result := make([]models.Stock, 0, 10)
+	println("Searching all stocks: ")
 	err = c.Find(bson.M{}).All(&result)
 	tools.ValidateFatal(err)
 
@@ -37,6 +38,7 @@ func GetStockByID(id string) models.Stock {
 	c := session.DB(configs.DB).C(cStocks)
 
 	result := models.Stock{}
+	println("Searching stock by ID: " + id)
 	err = c.Find(bson.M{"id": id}).One(&result)
 	tools.ValidateFatal(err)
 
@@ -52,6 +54,7 @@ func SaveStock(s models.Stock) models.Stock {
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(configs.DB).C(cStocks)
 
+	println("Saving new stock")
 	err = c.Insert(s)
 	tools.ValidateFatal(err)
 
@@ -66,6 +69,8 @@ func DeleteStock(id string) bool {
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(configs.DB).C(cStocks)
+
+	println("Removing stock by ID: " + id)
 	err = c.Remove(bson.M{"id": id})
 	return tools.ValidateExecution(err)
 }

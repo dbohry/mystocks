@@ -28,10 +28,11 @@ func GetTransaction(w http.ResponseWriter, req *http.Request) {
 // SaveTransaction save a new transaction
 //
 func SaveTransaction(w http.ResponseWriter, req *http.Request) {
+	params := mux.Vars(req)
 	var transaction models.Transaction
 	_ = json.NewDecoder(req.Body).Decode(&transaction)
-	saved := services.SaveTransaction(transaction)
-	result := services.GetStockByID(saved.ID)
+	saved := services.SaveTransaction(params["idUser"], transaction)
+	result := services.GetTransactionByID(params["idUser"], saved.ID)
 	json.NewEncoder(w).Encode(result)
 }
 

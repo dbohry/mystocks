@@ -9,63 +9,62 @@ import(
 	"github.com/dbohry/mystocks/tools"
 )
 
-const cStocks = "stocks"
+const cUsers = "users"
 
-//GetStocks get all stocks
+//GetUsers get all users
 //
-func GetStocks() []models.Stock {
+func GetUsers() []models.User {
 	session, err := mgo.Dial(configs.HOST)
 	tools.ValidatePanic(err)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-	c := session.DB(configs.DB).C(cStocks)
+	c := session.DB(configs.DB).C(cUsers)
 
-	result := make([]models.Stock, 0, 10)
+	result := make([]models.User, 0, 10)
 	err = c.Find(bson.M{}).All(&result)
 	tools.ValidateFatal(err)
 
 	return result
 }
 
-//GetStockByID get stock filtered by id
+//GetUserByName get user filtered by iname
 //
-func GetStockByID(id string) models.Stock {
+func GetUserByName(id string) models.User {
 	session, err := mgo.Dial(configs.HOST)
 	tools.ValidatePanic(err)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-	c := session.DB(configs.DB).C(cStocks)
+	c := session.DB(configs.DB).C(cUsers)
 
-	result := models.Stock{}
-	err = c.Find(bson.M{"id": id}).One(&result)
+	result := models.User{}
+	err = c.Find(bson.M{"user": id}).One(&result)
 	tools.ValidateFatal(err)
 
 	return result
 }
 
-//SaveStock save a new stock
+//SaveUser save a new user
 //
-func SaveStock(s models.Stock) models.Stock {
+func SaveUser(t models.User) models.User {
 	session, err := mgo.Dial(configs.HOST)
 	tools.ValidatePanic(err)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-	c := session.DB(configs.DB).C(cStocks)
-
-	err = c.Insert(s)
+	c := session.DB(configs.DB).C(cUsers)
+	err = c.Insert(t)
 	tools.ValidateFatal(err)
 
-	return s
+	return t
 }
 
-//DeleteStock remove a stock by ID
+//DeleteUser remove an user by ID
 //
-func DeleteStock(id string) bool {
+func DeleteUser(id string) bool {
 	session, err := mgo.Dial(configs.HOST)
 	tools.ValidatePanic(err)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-	c := session.DB(configs.DB).C(cStocks)
+	c := session.DB(configs.DB).C(cUsers)
 	err = c.Remove(bson.M{"id": id})
 	return tools.ValidateExecution(err)
 }

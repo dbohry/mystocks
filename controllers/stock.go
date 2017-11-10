@@ -9,8 +9,6 @@ import (
 	"github.com/dbohry/mystocks/services"
 )
 
-const collection = "stocks"
-
 // GetStocks return all stocks
 //
 func GetStocks(w http.ResponseWriter, req *http.Request) {
@@ -31,7 +29,7 @@ func GetStock(w http.ResponseWriter, req *http.Request) {
 func SaveStock(w http.ResponseWriter, req *http.Request) {
 	var stock models.Stock
 	_ = json.NewDecoder(req.Body).Decode(&stock)
-	saved := services.CreateStock(stock)
+	saved := services.SaveStock(stock)
 	result := services.GetStockByID(saved.ID)
 	json.NewEncoder(w).Encode(result)
 }
@@ -40,6 +38,10 @@ func SaveStock(w http.ResponseWriter, req *http.Request) {
 //
 func DeleteStock(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
-	services.DeleteStock(params["id"])
-	json.NewEncoder(w).Encode(params["id"] + " was removed!")
+	if services.DeleteStock(params["id"]) {
+		json.NewEncoder(w).Encode(params["id"] + " was removed!")
+	} else {
+		json.NewEncoder(w).Encode("Failed to remove " + params["id"])
+	}
+	
 }

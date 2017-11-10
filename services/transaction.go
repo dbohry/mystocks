@@ -9,63 +9,62 @@ import(
 	"github.com/dbohry/mystocks/tools"
 )
 
-const cStocks = "stocks"
+const cTransactions = "transactions"
 
-//GetStocks get all stocks
+//GetTransactions get all transactions
 //
-func GetStocks() []models.Stock {
+func GetTransactions(idUser string) []models.Transaction {
 	session, err := mgo.Dial(configs.HOST)
 	tools.ValidatePanic(err)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-	c := session.DB(configs.DB).C(cStocks)
+	c := session.DB(configs.DB).C(cTransactions)
 
-	result := make([]models.Stock, 0, 10)
+	result := make([]models.Transaction, 0, 10)
 	err = c.Find(bson.M{}).All(&result)
 	tools.ValidateFatal(err)
 
 	return result
 }
 
-//GetStockByID get stock filtered by id
+//GetTransactionByID get transaction filtered by id
 //
-func GetStockByID(id string) models.Stock {
+func GetTransactionByID(idUser string, id string) models.Transaction {
 	session, err := mgo.Dial(configs.HOST)
 	tools.ValidatePanic(err)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-	c := session.DB(configs.DB).C(cStocks)
+	c := session.DB(configs.DB).C(cTransactions)
 
-	result := models.Stock{}
+	result := models.Transaction{}
 	err = c.Find(bson.M{"id": id}).One(&result)
 	tools.ValidateFatal(err)
 
 	return result
 }
 
-//SaveStock save a new stock
+//SaveTransaction save a new transactions
 //
-func SaveStock(s models.Stock) models.Stock {
+func SaveTransaction(t models.Transaction) models.Transaction {
 	session, err := mgo.Dial(configs.HOST)
 	tools.ValidatePanic(err)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-	c := session.DB(configs.DB).C(cStocks)
-
-	err = c.Insert(s)
+	c := session.DB(configs.DB).C(cTransactions)
+	err = c.Insert(t)
 	tools.ValidateFatal(err)
 
-	return s
+	return t
 }
 
-//DeleteStock remove a stock by ID
+//DeleteTransaction remove a transactions by ID
 //
-func DeleteStock(id string) bool {
+func DeleteTransaction(idUser string, id string) bool {
 	session, err := mgo.Dial(configs.HOST)
 	tools.ValidatePanic(err)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-	c := session.DB(configs.DB).C(cStocks)
+	c := session.DB(configs.DB).C(cTransactions)
 	err = c.Remove(bson.M{"id": id})
 	return tools.ValidateExecution(err)
 }

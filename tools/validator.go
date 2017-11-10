@@ -10,6 +10,16 @@ func ValidateFatal(err error) {
 	}
 }
 
+//ValidateExecution validate if an execution was successful
+//
+func ValidateExecution(err error) bool {
+	shouldContinue := true
+	if err != nil {
+		shouldContinue = false
+	}
+	return shouldContinue
+}
+
 //ValidatePanic check error
 //
 func ValidatePanic(err error) {

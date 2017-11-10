@@ -4,6 +4,8 @@ package tools
 //
 func ValidateFatal(err error) {
 	if err != nil {
+		println("Something get wrong!!!")
+		println(err)
 		panic(err)
 	}
 }

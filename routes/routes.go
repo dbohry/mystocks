@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"fmt"
+	"github.com/dbohry/mystocks/configs"
 	"log"
 	"net/http"
 	"github.com/gorilla/mux"
@@ -28,5 +30,6 @@ func Start() {
 	router.HandleFunc("/users/{idUser}/transactions/{id}", controllers.GetTransaction).Methods("GET")
 	router.HandleFunc("/users/{idUser}/transactions/{id}", controllers.DeleteTransaction).Methods("DELETE")
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	fmt.Println("Your server is running on " + configs.PORT)
+	log.Fatal(http.ListenAndServe(configs.PORT, router))
 }

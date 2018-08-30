@@ -30,6 +30,6 @@ func Start() {
 	router.HandleFunc("/users/{idUser}/transactions/{id}", controllers.GetTransaction).Methods("GET")
 	router.HandleFunc("/users/{idUser}/transactions/{id}", controllers.DeleteTransaction).Methods("DELETE")
 
-	fmt.Println("Your server is running on " + configs.PORT)
+	fmt.Printf("Your server is running on [%s]", configs.PORT)
 	log.Fatal(http.ListenAndServe(configs.PORT, router))
 }

@@ -1,6 +1,7 @@
 package services
 
 import(
+	"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
@@ -21,7 +22,7 @@ func GetTransactions(idUser string) []models.Transaction {
 	c := session.DB(configs.DB).C(cTransactions)
 
 	result := make([]models.Transaction, 0, 10)
-	println("Searching Transactions by User: " + idUser)
+	fmt.Printf("\nSearching Transactions by User [%s]", idUser)
 	err = c.Find(bson.M{}).All(&result)
 	tools.ValidateFatal(err)
 
@@ -38,7 +39,7 @@ func GetTransactionByID(idUser string, id string) models.Transaction {
 	c := session.DB(configs.DB).C(cTransactions)
 
 	result := models.Transaction{}
-	println("Searching specific Transaction by User: " + idUser)
+	fmt.Printf("\nSearching Transaction [%s] of User [%s]", id, idUser)
 	err = c.Find(bson.M{"id": id}).One(&result)
 	tools.ValidateFatal(err)
 

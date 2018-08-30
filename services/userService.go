@@ -22,9 +22,10 @@ func GetUsers() []models.User {
 	c := session.DB(configs.DB).C(cUsers)
 
 	result := make([]models.User, 0, 10)
-	fmt.Println("Searching for all Users")
 	err = c.Find(bson.M{}).All(&result)
 	tools.ValidateFatal(err)
+
+	fmt.Printf("\nSearching for all Users [%s]", result)
 
 	return result
 }
@@ -39,7 +40,7 @@ func GetUserById(id string) models.User {
 	c := session.DB(configs.DB).C(cUsers)
 
 	result := models.User{}
-	fmt.Println("Searching User by Id: " + id)
+	fmt.Printf("\nSearching User by Id [%s]", id)
 	err = c.FindId(bson.ObjectIdHex(id)).One(&result)
 	tools.ValidateFatal(err)
 
@@ -55,7 +56,7 @@ func SaveUser(t models.User) models.User {
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(configs.DB).C(cUsers)
 
-	fmt.Println("Saving new User")
+	fmt.Printf("\nSaving new User [%s]", t)
 	err = c.Insert(t)
 	tools.ValidateFatal(err)
 
@@ -71,7 +72,7 @@ func DeleteUser(id string) bool {
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(configs.DB).C(cUsers)
 
-	println("Removing User by ID: " + id)
+	fmt.Printf("\nRemoving User by Id [%s]", id)
 	err = c.Remove(bson.M{"id": id})
 	return tools.ValidateExecution(err)
 }

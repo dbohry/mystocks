@@ -2,14 +2,15 @@
 
 A simple web app using Go and MongoDB to store stocks history.
 
-# Intalation
+# install dependencies
 
-- URL Router
 ```bash
-go get -u github.com/gorilla/mux
+$ go get -u github.com/gorilla/mux
+$ go get -u gopkg.in/mgo.v2
 ```
 
-- Mongo Driver for Go
-```bash
-go get -u gopkg.in/mgo.v2
+# run
+
+```
+$ go run 
 ```

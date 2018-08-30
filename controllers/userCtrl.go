@@ -18,9 +18,9 @@ func GetUsers(w http.ResponseWriter, req *http.Request) {
 
 // GetUserByName return an user by name
 //
-func GetUserByName(w http.ResponseWriter, req *http.Request) {
+func GetUser(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
-	result := services.GetUserByName(params["id"])
+	result := services.GetUserById(params["id"])
 	json.NewEncoder(w).Encode(result)
 }
 
@@ -30,7 +30,7 @@ func SaveUser(w http.ResponseWriter, req *http.Request) {
 	var user models.User
 	_ = json.NewDecoder(req.Body).Decode(&user)
 	saved := services.SaveUser(user)
-	result := services.GetUserByName(saved.User)
+	result := services.GetUserById(saved.User)
 	json.NewEncoder(w).Encode(result)
 }
 

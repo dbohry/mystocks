@@ -22,7 +22,7 @@ func Start() {
 	
 	router.HandleFunc("/users", controllers.GetUsers).Methods("GET")
 	router.HandleFunc("/users", controllers.SaveUser).Methods("POST")
-	router.HandleFunc("/users/{id}", controllers.GetUserByName).Methods("GET")
+	router.HandleFunc("/users/{id}", controllers.GetUser).Methods("GET")
 	router.HandleFunc("/users/{id}", controllers.DeleteUser).Methods("DELETE")
 
 	router.HandleFunc("/users/{idUser}/transactions", controllers.GetTransactions).Methods("GET")

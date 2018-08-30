@@ -78,8 +78,8 @@ func DeleteTransaction(idUser string, id string) bool {
 	return tools.ValidateExecution(err)
 }
 
-func getUser(name string) models.User {
-	return GetUserByName(name)
+func getUser(id string) models.User {
+	return GetUserById(id)
 }
 
 func getStock(id string) models.Stock {
